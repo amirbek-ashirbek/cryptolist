@@ -24,7 +24,7 @@ class CoinListViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getCoins() {
+    fun getCoins() {
         viewModelScope.launch {
             getCoinsUseCase.execute().collect { response ->
                 when (response) {

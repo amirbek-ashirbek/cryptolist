@@ -18,6 +18,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.cryptolist.presentation.CoinDetailsScreen
 import com.example.cryptolist.presentation.coin_list.components.CoinListItem
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun CoinListScreen(
@@ -26,16 +28,22 @@ fun CoinListScreen(
     modifier: Modifier = Modifier,
 ) {
     val uiState = coinListViewModel.uiState.value
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = uiState.isLoading)
 
     Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(uiState.coins) { coin ->
-                CoinListItem(
-                    coin = coin,
-                    onItemClick = {
-                        navController.navigate(CoinDetailsScreen.route + "/${coin.id}")
-                    }
-                )
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = coinListViewModel::getCoins,
+        ) {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(uiState.coins) { coin ->
+                    CoinListItem(
+                        coin = coin,
+                        onItemClick = {
+                            navController.navigate(CoinDetailsScreen.route + "/${coin.id}")
+                        }
+                    )
+                }
             }
         }
         if (uiState.error.isNotBlank()) {
