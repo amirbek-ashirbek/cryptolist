@@ -22,25 +22,27 @@ class CoinDetailsViewModel @Inject constructor(
 
     init {
         savedStateHandle.get<String>("coinId")?.let { coinId ->
-            getCoinDetails(coinId)
+            viewModelScope.launch {
+                getCoinDetails(coinId)
+            }
         }
     }
 
-    private fun getCoinDetails(coinId: String) {
+    private suspend fun getCoinDetails(coinId: String) {
         viewModelScope.launch {
-            val result = getCoinDetailsUseCase.execute(coinId)
-
-            when (result) {
-                is Response.Success -> {
-                    _uiState.value = CoinDetailsState(coinDetails = result.data)
-                }
-                is Response.Error -> {
-                    _uiState.value = CoinDetailsState(
-                        error = result.errorMessage ?: "An unexpected error occurred."
-                    )
-                }
-                is Response.Loading -> {
-                    _uiState.value = CoinDetailsState(isLoading = true)
+            getCoinDetailsUseCase.execute(coinId).collect { response ->
+                when (response) {
+                    is Response.Success -> {
+                        _uiState.value = CoinDetailsState(coinDetails = response.data)
+                    }
+                    is Response.Error -> {
+                        _uiState.value = CoinDetailsState(
+                            error = response.errorMessage ?: "An unexpected error occurred."
+                        )
+                    }
+                    is Response.Loading -> {
+                        _uiState.value = CoinDetailsState(isLoading = true)
+                    }
                 }
             }
         }

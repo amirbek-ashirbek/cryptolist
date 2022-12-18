@@ -26,17 +26,17 @@ class CoinListViewModel @Inject constructor(
 
     private suspend fun getCoins() {
         viewModelScope.launch {
-            val result = getCoinsUseCase.execute()
-
-            when (result) {
-                is Response.Success -> {
-                    _uiState.value = CoinListState(coins = result.data ?: emptyList())
-                }
-                is Response.Error -> {
-                    _uiState.value = CoinListState(error = result.errorMessage ?: "An unexpected error occurred.")
-                }
-                is Response.Loading -> {
-                    _uiState.value = CoinListState(isLoading = true)
+            getCoinsUseCase.execute().collect { response ->
+                when (response) {
+                    is Response.Success -> {
+                        _uiState.value = CoinListState(coins = response.data ?: emptyList())
+                    }
+                    is Response.Error -> {
+                        _uiState.value = CoinListState(error = response.errorMessage ?: "An unexpected error occurred.")
+                    }
+                    is Response.Loading -> {
+                        _uiState.value = CoinListState(isLoading = true)
+                    }
                 }
             }
         }
