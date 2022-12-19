@@ -71,9 +71,12 @@ dependencies {
     kapt "androidx.hilt:hilt-compiler:1.0.0"
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
 
-    // Compose
+    // Accompanist
     implementation "com.google.accompanist:accompanist-flowlayout:0.17.0"
     implementation "com.google.accompanist:accompanist-swiperefresh:0.27.0"
+
+    // Splash Screen
+    implementation "androidx.core:core-splashscreen:1.0.0"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
